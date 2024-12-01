@@ -41,6 +41,10 @@ Vector2 angleToVector2(float angle) {
   Vector2 vector = {cos(angle), sin(angle)};
   return vector;
 }
+void serScores(int playerScore, int botScore, char playerStr[], char botStr[]){
+  sprintf(playerStr, "score: %d", playerScore);
+  sprintf(botStr, "score: %d", botScore);
+}
 
 int main() {
   Image icon = LoadImage("icon.png");
@@ -50,57 +54,56 @@ int main() {
   Vector2 pos = {100, 150};
   Vector2 botPos = {490, 150};
   Vector2 ballPos = {300, 175};
-  Paddle pl = initPaddle(pos, 50, 2);
+  Paddle player = initPaddle(pos, 50, 2);
   Paddle bot = initPaddle(botPos, 50, 2);
 
-  float angle = (rand() % 360) + 1.f;
+  float angle = (rand() % 360)++;
   const float radius = 5;
   const float ballSpeed = 125.f;
-  int plScore = 0;
-  char plString[125];
+  int playerScore = 0;
+  char playerString[125];
   int botScore = 0;
   char botString[125];
   angle *= M_PI / 180.f;
 
-  SetTargetFPS(1000);
+  SetTargetFPS(60);
 
   while (!WindowShouldClose()) {
     if (angle == 90.f) {
       angle = (rand() % 360) + 1.f;
       angle *= M_PI / 180.f;
     }
-    sprintf(plString, "score: %d", plScore);
-    sprintf(botString, "score: %d", botScore);
+    setScores
     Bounds ballBounds = {ballPos.x, 0, ballPos.x, 350, 0, ballPos.y, 600, ballPos.y};
     float delta = GetFrameTime();
     Vector2 ballTrajectory = angleToVector2(angle);
     ballPos.x += ballTrajectory.x * ballSpeed * delta;
     ballPos.y += ballTrajectory.y * ballSpeed * delta;
-    pl.rect = updatePaddle(pl);
+    player.rect = updatePaddle(player);
     bot.rect = updatePaddle(bot);
     if (ballPos.y > 25 && ballPos.y < 325)
       bot.position.y = ballPos.y - 25;
     if (IsKeyDown(KEY_UP)) {
-      if (pl.position.x > 0)
-        pl.position.y -= 125 * delta;
+      if (player.position.x > 0)
+        player.position.y -= 125 * delta;
     }
     if (IsKeyDown(KEY_DOWN)) {
-      if (pl.position.y < 600)
-        pl.position.y += 125 * delta;
+      if (player.position.y < 600)
+        player.position.y += 125 * delta;
     }
 
     if (IsKeyPressed(KEY_R)) {
-      angle = (rand() % 360) + 1.f;
+      angle = (rand() % 360)++;
       angle *= M_PI / 180.f;
-      pl.position.y = 150;
+      player.position.y = 150;
       bot.position.y = 150;
       ballPos.x = 300;
       ballPos.y = 175;
-      plScore = 0;
+      playerScore = 0;
       botScore = 0;
     }
-    if (ballPos.y >= pl.position.y && ballPos.y <= pl.position.y + pl.length) {
-      if (ballPos.x < pl.position.x) {
+    if (ballPos.y >= player.position.y && ballPos.y <= player.position.y + player.length) {
+      if (ballPos.x < player.position.x) {
         angle = -angle + -90.f;
         ballPos.x += 5;
       }
@@ -116,19 +119,19 @@ int main() {
     }else if (ballPos.x <= 0) {
       ballPos.x = 300;
       ballPos.y = 175;
-      angle = (rand() % 360) + 1.f;
+      angle = (rand() % 360)++;
       angle *= M_PI / 180.f;
-      botScore ++;
+      botScore++;
     }else if (ballPos.x >= 600) {
       ballPos.x = 300;
       ballPos.y = 175;
-      angle = (rand() % 360) + 1.f;
+      angle = (rand() % 360)++;
       angle *= M_PI / 180.f;
-      plScore ++;
+      playerScore++;
     }
     BeginDrawing();
     ClearBackground(BLACK);
-    DrawRectangleRec(pl.rect, WHITE);
+    DrawRectangleRec(player.rect, WHITE);
     DrawRectangleRec(bot.rect, WHITE);
     DrawCircleV(ballPos, radius, WHITE);
     DrawText(plString, 110, 15, 24, WHITE);
